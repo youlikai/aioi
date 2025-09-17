@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>多彩爱心动画</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        love: {
+                            red: '#ff3864',
+                            pink: '#ff758f',
+                            purple: '#e94560',
+                            blue: '#4d7cf3',
+                            yellow: '#ffd166',
+                            green: '#06d6a0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .heart {
+                position: absolute;
+                pointer-events: none;
+                animation: fadeIn 0.2s ease-out forwards;
+            }
+            
+            .pulse {
+                animation: pulse 1s infinite;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden">
+    <div class="text-center mb-10 z-10">
+        <h1 class="text-[clamp(2rem,6vw,3rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-love-red to-love-purple mb-4">
+            爱的点击
+        </h1>
+        <p class="text-gray-600 text-[clamp(1rem,3vw,1.25rem)] max-w-md mx-auto">
+            点击或触摸屏幕的任何地方，释放你的爱心
+        </p>
+    </div>
+
+    <!-- 中央爱心按钮 -->
+    <div id="centerHeart" class="text-love-red text-[clamp(10rem,30vw,15rem)] pulse cursor-pointer mb-8 z-10">
+        <i class="fa fa-heart"></i>
+    </div>
+
+    <div class="text-gray-500 text-sm mt-auto z-10">
+        <p>每一次点击，都是一份爱 ❤️</p>
+    </div>
+
+    <script>
+        // 爱心颜色集合
+        const heartColors = [
+            'text-love-red',
+            'text-love-pink',
+            'text-love-purple',
+            'text-love-blue',
+            'text-love-yellow',
+            'text-love-green'
+        ];
+
+        // 创建爱心元素
+        function createHeart(x, y) {
+            // 创建新元素
+            const heart = document.createElement('div');
+            heart.innerHTML = '<i class="fa fa-heart"></i>';
+            
+            // 随机大小 (16px 到 48px)
+            const size = Math.random() * 32 + 16;
+            heart.style.fontSize = `${size}px`;
+            
+            // 随机颜色
+            const color = heartColors[Math.floor(Math.random() * heartColors.length)];
+            heart.className = `heart ${color}`;
+            
+            // 设置位置
+            heart.style.left = `${x - size/2}px`;
+            heart.style.top = `${y - size/2}px`;
+            
+            // 随机动画持续时间 (1.5s 到 4s)
+            const duration = Math.random() * 2.5 + 1.5;
+            heart.style.animation = `float ${duration}s ease-out forwards`;
+            
+            // 随机水平偏移量
+            const drift = (Math.random() - 0.5) * 100;
+            heart.style.transform = `translateX(${drift}px)`;
+            
+            // 添加到页面
+            document.body.appendChild(heart);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        // 点击事件监听
+        document.addEventListener('click', (e) => {
+            // 每次点击创建1-3个爱心
+            const count = Math.floor(Math.random() * 3) + 1;
+            for (let i = 0; i < count; i++) {
+                // 轻微随机偏移，让爱心分散一点
+                const offsetX = (Math.random() - 0.5) * 40;
+                const offsetY = (Math.random() - 0.5) * 40;
+                createHeart(e.clientX + offsetX, e.clientY + offsetY);
+            }
+        });
+
+        // 触摸事件监听（移动设备）
+        document.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // 防止默认行为
+            const touch = e.touches[0];
+            const count = Math.floor(Math.random() * 3) + 1;
+            for (let i = 0; i < count; i++) {
+                const offsetX = (Math.random() - 0.5) * 40;
+                const offsetY = (Math.random() - 0.5) * 40;
+                createHeart(touch.clientX + offsetX, touch.clientY + offsetY);
+            }
+        }, { passive: false });
+
+        // 自动生成爱心
+        function autoHearts() {
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 70%概率生成
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createHeart(x, y);
+                }
+            }, 3000);
+        }
+
+        // 页面加载完成后开始
+        window.addEventListener('load', autoHearts);
+    </script>
+</body>
+</html>
